@@ -106,6 +106,7 @@ def update():
     map_html = folium_map._repr_html_()
 
     bus_eta = get_bus_eta(route, dir, stop_id)
+    print(route, dir, stop_id)
     map_content = render_template('map.html', map_html=map_html)
     table_content = render_template('table.html', bus_eta=bus_eta)
     return jsonify({
