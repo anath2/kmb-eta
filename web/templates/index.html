@@ -62,7 +62,24 @@
             $('#route').select2({
                 placeholder: "Select a route",
                 allowClear: true,
-                width: '100%'
+                width: '100%',
+                ajax: {
+                    url: '/search-routes',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            q: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 1
             });
         });
     </script>

@@ -101,6 +101,20 @@ def update_options():
     ])
     return options
 
+@app.route('/search-routes', methods=['GET'])
+def search_routes():
+    query = request.args.get('q', '')
+    routes = g.routes
+    route_strings = [f"{route} - {destination}" for route, bound, destination in routes]
+    results = process.extract(query, route_strings, limit=10)
+    return jsonify([
+        {
+            'id': f"{routes[route_strings.index(result[0])][0]},{routes[route_strings.index(result[0])][1]}",
+            'text': result[0]
+        }
+        for result in results
+    ])
+
        
 def get_bus_eta(bus_no: str, bound: str, stop: str):
     eta_url = f"https://data.etabus.gov.hk/v1/transport/kmb/eta/{stop}/{bus_no}/1"
