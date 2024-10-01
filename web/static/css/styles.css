@@ -26,28 +26,31 @@ h2, h3 {
     display: inline-block;
 }
 
-.dropdown-content {
+#route-results {
     display: none;
     position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
+#route-results.show {
     display: block;
 }
 
-.dropdown-content a:hover {
-    background-color: #f1f1f1;
+.route-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.dropdown.show .dropdown-content {
-    display: block;
+.route-option:hover {
+    background-color: #f8f9fa;
 }
 
 #map {

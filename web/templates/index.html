@@ -60,16 +60,28 @@
         });
 
         document.addEventListener('click', function(event) {
+            const routeResults = document.getElementById('route-results');
             if (event.target.classList.contains('route-option')) {
                 const selectedId = event.target.dataset.id;
                 const selectedText = event.target.textContent;
                 document.getElementById('route').value = selectedId;
                 document.getElementById('route-search').value = selectedText;
-                document.getElementById('route-results').innerHTML = '';
+                routeResults.innerHTML = '';
+                routeResults.classList.remove('show');
                 
                 const [route, direction] = selectedId.split('|');
                 htmx.ajax('GET', `/update-options?route=${encodeURIComponent(route)}&direction=${encodeURIComponent(direction)}`, '#stop');
+            } else if (!event.target.matches('#route-search')) {
+                routeResults.classList.remove('show');
             }
+        });
+
+        document.getElementById('route-search').addEventListener('focus', function() {
+            document.getElementById('route-results').classList.add('show');
+        });
+
+        document.getElementById('route-search').addEventListener('input', function() {
+            document.getElementById('route-results').classList.add('show');
         });
     </script>
 </body>
