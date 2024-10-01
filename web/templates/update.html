@@ -9,7 +9,7 @@
     <tbody>
         {% for eta in bus_eta %}
         <tr>
-            <td>{{ eta if eta > 0 else '-' }}</td>
+            <td>{{ eta if eta and eta > 0 else '-' }}</td>
         </tr>
         {% endfor %}
     </tbody>
