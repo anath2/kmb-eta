@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stupid Simple Bus Tracker</title>
-    <link rel="stylesheet" href={{ url_for('static', filename='css/styles.css') }}>
-    <script src="https://unpkg.com/htmx.org"></script>
-    <script src={{ url_for('static', filename='js/app.js') }} defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://unpkg.com/htmx.org" defer></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
 </head>
 <body>
     <h1>Stupid Simple KMB Bus Tracker</h1>
     <label for="route">Select Route:</label>
-    <select id="route" name="route" hx-get="/update-options" hx-target="#stop" hx-trigger="change">
+    <select id="route" name="route" hx-get="/update-options" hx-target="#stop" hx-trigger="change" aria-label="Select Route">
         <option value="">--Select--</option>
         {% for route, bound, destination in routes %}
             <option value="{{route}}, {{bound}}">{{ route }} - {{destination}}</option>
@@ -20,7 +20,7 @@
     <br/>
 
     <label for="stop">Select Stop:</label>
-    <select id="stop" name="stop">
+    <select id="stop" name="stop" aria-label="Select Stop">
         <option value="">--Select--</option>
         <!--Dynamic update-->
     </select>
@@ -31,12 +31,12 @@
         hx-target="#display"
         hx-trigger="click"
         hx-include="[name='route'],[name='stop']"
-    >
+        aria-label="Submit">
         Submit
     </button>
 
     <div id="display">
+        <!-- Placeholder for dynamic content -->
     </div>
-</div>
 </body>
 </html>
