@@ -9,13 +9,13 @@
     <script src="https://unpkg.com/htmx.org" defer></script>
     <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
 </head>
-<body class="container mt-5">
+<body class="container">
     <h1 class="text-center mb-4">Stupid Simple KMB Bus Tracker</h1>
 
     <div class="row">
         <div class="col-lg-6">
             <div class="form-group">
-                <label for="route">Select Route:</label>
+                <label for="route"><b>Select Route:</b></label>
                 <select class="form-control" id="route" name="route" hx-get="/update-options" hx-target="#stop" hx-trigger="change" aria-label="Select Route">
                     <option value="">--Select--</option>
                     {% for route, bound, destination in routes %}
@@ -24,7 +24,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="stop">Select Stop:</label>
+                <label for="stop"><b>Select Stop:</b></label>
                 <select class="form-control" id="stop" name="stop" aria-label="Select Stop">
                     <option value="">--Select--</option>
                     <!--Dynamic update-->
@@ -39,9 +39,11 @@
                 aria-label="Submit">
                 Submit
             </button>
-            <div id="bus-eta" class="mt-4"><!-- Table will be updated here --></div>
         </div>
+    </div>
+    <div class="row">
         <div class="col-lg-6">
+            <div id="bus-eta" class="mt-4"><!-- Table will be updated here --></div>
             <div id="map"><!-- Map will be updated here --></div>
         </div>
     </div>
