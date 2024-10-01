@@ -1,6 +1,7 @@
 import sqlite3
 import folium
 import requests
+import fuzzywuzzy as fw
 from datetime import datetime
 from flask import Flask, render_template, request, g
 
