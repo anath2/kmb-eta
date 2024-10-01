@@ -100,6 +100,28 @@
                 }
             });
 
+            searchInput.addEventListener('input', debounce(function() {
+                const query = this.value;
+                if (query.length < 2) {
+                    resultsDiv.innerHTML = '';
+                    return;
+                }
+
+                console.log('Sending search request for:', query);
+                fetch(`/search-routes?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Received search results:', data);
+                        resultsDiv.innerHTML = data.map(route => 
+                            `<div class="route-option" data-id="${route.id}">${route.text}</div>`
+                        ).join('');
+                    })
+                    .catch(error => {
+                        console.error('Error in search:', error);
+                        resultsDiv.innerHTML = '<div>Error in search. Please try again.</div>';
+                    });
+            }, 300));
+
             function debounce(func, wait) {
                 let timeout;
                 return function executedFunction(...args) {

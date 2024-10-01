@@ -61,17 +61,19 @@ def index():
 @app.route('/search-routes', methods=['GET'])
 def search_routes():
     query = request.args.get('q', '')
-    print(query)
+    app.logger.info(f"Search query: {query}")
     routes = g.routes
     route_strings = [f"{route} - {destination}" for route, bound, destination in routes]
     results = process.extract(query, route_strings, limit=10)
-    return jsonify([
+    response = [
         {
-            'id': f"{routes[route_strings.index(result[0])][0]},{routes[route_strings.index(result[0])][1]}",
+            'id': f"{routes[route_strings.index(result[0])][0]}|{routes[route_strings.index(result[0])][1]}",
             'text': result[0]
         }
         for result in results
-    ])
+    ]
+    app.logger.info(f"Search results: {response}")
+    return jsonify(response)
 
 
 @app.route('/update-options', methods=['GET'])
