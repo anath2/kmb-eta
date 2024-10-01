@@ -5,10 +5,16 @@
         </tr>
     </thead>
     <tbody>
-        {% for eta in bus_eta %}
-        <tr>
-            <td>{{ eta if eta and eta > 0 else '-' }}</td>
-        </tr>
-        {% endfor %}
+        {% if bus_eta %}
+            {% for eta in bus_eta %}
+            <tr>
+                <td>{{ eta if eta and eta > 0 else '-' }}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="1">No ETA data available</td>
+            </tr>
+        {% endif %}
     </tbody>
 </table>
