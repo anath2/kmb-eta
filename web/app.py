@@ -74,7 +74,7 @@ def update():
     stop_long = float(stop_long.strip())
     stop_lat = float(stop_lat.strip())
 
-    folium_map = folium.Map(location=[stop_lat, stop_long], zoom_start=20)
+    folium_map = folium.Map(location=[stop_lat, stop_long], zoom_start=18, tiles='CartoDB Voyager')
     folium.Marker([stop_lat, stop_long], popup=stop_name).add_to(folium_map)
     map_html = folium_map._repr_html_()
 
