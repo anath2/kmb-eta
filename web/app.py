@@ -69,6 +69,7 @@ def search_routes():
     routes = {f"{route}|{bound}": destination for route, bound, destination in g.routes}
 
     def custom_scorer(choice, query):
+        print(choice, query)
         route_bound, destination = choice
         route = route_bound.split('|')[0]
         route_score = fuzz.ratio(query.lower(), route.lower()) * 2  # Give more weight to exact route matches
