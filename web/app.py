@@ -65,6 +65,7 @@ def search_routes():
     routes = g.routes
     route_strings = [f"{route} - {destination}" for route, bound, destination in routes]
     results = process.extract(query, route_strings, limit=10)
+    results = sorted(results, key=lambda x: x[1], reverse=True)
     response = [
         f'<div class="route-option" data-id="{routes[route_strings.index(result[0])][0]}|{routes[route_strings.index(result[0])][1]}">{result[0]}</div>'
         for result in results
