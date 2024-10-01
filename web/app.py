@@ -4,6 +4,10 @@ import requests
 from fuzzywuzzy import process
 from datetime import datetime
 from flask import Flask, render_template, request, g, jsonify
+import time
+
+# Add this near the top of your file, after the imports
+timestamp = int(time.time())
 
 app = Flask(__name__)
 
@@ -55,7 +59,7 @@ def get_stops_by_route_and_bound(route, bound):
 @app.route('/')
 def index():
     routes = g.routes
-    return render_template('index.html', routes=routes)
+    return render_template('index.html', routes=routes, timestamp=timestamp)
 
 
 @app.route('/search-routes', methods=['GET'])
