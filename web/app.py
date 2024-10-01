@@ -58,8 +58,35 @@ def index():
     return render_template('index.html', routes=routes)
 
 
-# Route to handle HTMX requests for updates
-from flask import jsonify
+@app.route('/search-routes', methods=['GET'])
+def search_routes():
+    query = request.args.get('q', '')
+    print(query)
+    routes = g.routes
+    route_strings = [f"{route} - {destination}" for route, bound, destination in routes]
+    results = process.extract(query, route_strings, limit=10)
+    return jsonify([
+        {
+            'id': f"{routes[route_strings.index(result[0])][0]},{routes[route_strings.index(result[0])][1]}",
+            'text': result[0]
+        }
+        for result in results
+    ])
+
+
+@app.route('/update-options', methods=['GET'])
+def update_options():
+    route, bound = request.args.get('route', '').split(',')
+    route = route.strip()
+    bound = bound.strip()
+    stops = get_stops_by_route_and_bound(route, bound)
+    # Return the stop options as a string of <option> elements
+    options = ''.join([
+        f'<option value="{stop_name},{stop_id},{stop_long},{stop_lat}">{stop_name}</option>' 
+        for stop_name, stop_id, stop_long, stop_lat in stops
+    ])
+    return options
+
 
 @app.route('/update', methods=['GET'])
 def update():
@@ -87,33 +114,6 @@ def update():
         'table': table_content
     })
 
-
-@app.route('/update-options', methods=['GET'])
-def update_options():
-    route, bound = request.args.get('route', '').split(',')
-    route = route.strip()
-    bound = bound.strip()
-    stops = get_stops_by_route_and_bound(route, bound)
-    # Return the stop options as a string of <option> elements
-    options = ''.join([
-        f'<option value="{stop_name},{stop_id},{stop_long},{stop_lat}">{stop_name}</option>' 
-        for stop_name, stop_id, stop_long, stop_lat in stops
-    ])
-    return options
-
-@app.route('/search-routes', methods=['GET'])
-def search_routes():
-    query = request.args.get('q', '')
-    routes = g.routes
-    route_strings = [f"{route} - {destination}" for route, bound, destination in routes]
-    results = process.extract(query, route_strings, limit=10)
-    return jsonify([
-        {
-            'id': f"{routes[route_strings.index(result[0])][0]},{routes[route_strings.index(result[0])][1]}",
-            'text': result[0]
-        }
-        for result in results
-    ])
 
        
 def get_bus_eta(bus_no: str, bound: str, stop: str):
