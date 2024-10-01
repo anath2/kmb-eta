@@ -11,51 +11,50 @@
 </head>
 <body class="container mt-5">
     <h1 class="text-center mb-4">Stupid Simple KMB Bus Tracker</h1>
+
     <div class="row">
         <div class="col-lg-6 mt-4">
-            <div class="form-group">
-                <label for="route">Select Route:</label>
-                <select class="form-control" id="route" name="route" hx-get="/update-options" hx-target="#stop" hx-trigger="change" aria-label="Select Route">
-                    <option value="">--Select--</option>
-                    {% for route, bound, destination in routes %}
+            <div id="bus-eta"><!-- Table will be updated here --></div>
+        </div>
+        <div class="form-group">
+            <label for="route">Select Route:</label>
+            <select class="form-control" id="route" name="route" hx-get="/update-options" hx-target="#stop" hx-trigger="change" aria-label="Select Route">
+                <option value="">--Select--</option>
+                {% for route, bound, destination in routes %}
                         <option value="{{route}}, {{bound}}">{{ route }} - {{destination}}</option>
                     {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="stop">Select Stop:</label>
-                <select class="form-control" id="stop" name="stop" aria-label="Select Stop">
-                    <option value="">--Select--</option>
-                    <!--Dynamic update-->
-                </select>
-            </div>
-            <button class="btn btn-primary"
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="stop">Select Stop:</label>
+            <select class="form-control" id="stop" name="stop" aria-label="Select Stop">
+                <option value="">--Select--</option>
+                <!--Dynamic update-->
+            </select>
+        </div>
+        <button class="btn btn-primary"
                 hx-get="/update" 
-                hx-target="this"
+                hx-target="#bus-eta"
                 hx-trigger="click"
                 hx-include="[name='route'],[name='stop']"
-                hx-swap="none"
+                hx-swap="outerHTML"
                 aria-label="Submit">
                 Submit
-            </button>
-            <script>
-                document.body.addEventListener('htmx:afterRequest', function(event) {
-                    if (event.detail.elt.getAttribute('aria-label') === 'Submit') {
-                        var response = JSON.parse(event.detail.xhr.responseText);
-                        document.getElementById('map').innerHTML = response.map;
-                        document.getElementById('bus-eta').innerHTML = response.table;
-                    }
-                });
-            </script>
-        </div>
+        </button>
+
         <div class="col-lg-6 mt-4">
             <div id="map"><!-- Map will be updated here --></div>
         </div>
-   </div>
-   <div class="row">
-        <div class="col-lg-12 mt-4">
-            <div id="bus-eta"><!-- Table will be updated here --></div>
-        </div>
     </div>
+
+    <script>
+        document.body.addEventListener('htmx:afterRequest', function(event) {
+            if (event.detail.elt.getAttribute('aria-label') === 'Submit') {
+                var response = JSON.parse(event.detail.xhr.responseText);
+                document.getElementById('map').innerHTML = response.map;
+                document.getElementById('bus-eta').innerHTML = response.table;
+            }
+        });
+    </script>
 </body>
 </html>
