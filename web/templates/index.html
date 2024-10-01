@@ -31,7 +31,7 @@
             </div>
             <button class="btn btn-primary"
                 hx-get="/update" 
-                hx-target="#display"
+                hx-target="#map, #bus-eta"
                 hx-trigger="click"
                 hx-include="[name='route'],[name='stop']"
                 aria-label="Submit">
@@ -41,8 +41,8 @@
         <div class="col-lg-6 mt-4">
             <div id="map"><!-- Map will be updated here --></div>
         </div>
-       </div>
-       <div class="row">
+    </div>
+    <div class="row">
         <div class="col-lg-6 mt-4">
             <div id="bus-eta"><!-- Table will be updated here --></div>
         </div>
