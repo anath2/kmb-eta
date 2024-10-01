@@ -1,9 +1,9 @@
 import sqlite3
 import folium
 import requests
-import fuzzywuzzy as fw
+from fuzzywuzzy import process
 from datetime import datetime
-from flask import Flask, render_template, request, g
+from flask import Flask, render_template, request, g, jsonify
 
 app = Flask(__name__)
 
