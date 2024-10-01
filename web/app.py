@@ -105,8 +105,8 @@ def update():
     folium.Marker([stop_lat, stop_long], popup=stop_name).add_to(folium_map)
     map_html = folium_map._repr_html_()
 
-    bus_eta = get_bus_eta(route, dir, stop_id)
-    print(route, dir, stop_id)
+    bus_eta = get_bus_eta(route, direction, stop_id)
+    print(route, direction, stop_id)
     map_content = render_template('map.html', map_html=map_html)
     table_content = render_template('table.html', bus_eta=bus_eta)
     return jsonify({
@@ -116,13 +116,13 @@ def update():
 
 
        
-def get_bus_eta(bus_no: str, bound: str, stop: str):
+def get_bus_eta(bus_no: str, direction: str, stop: str):
     eta_url = f"https://data.etabus.gov.hk/v1/transport/kmb/eta/{stop}/{bus_no}/1"
     curr_time = datetime.now()
 
     try:
         content = requests.get(eta_url).json()['data']
-        content = [c for c in content if c['dir'] == bound]  # ensures same direction
+        content = [c for c in content if c['dir'] == direction]  # ensures same direction
         content = [c for c in content if c['eta'] != '']
         content = [calculate_time_diff(curr_time, c['eta']) for c in content]
         return list(sorted(content))
