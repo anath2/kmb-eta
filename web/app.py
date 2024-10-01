@@ -1,7 +1,7 @@
 import sqlite3
 import folium
 import requests
-from fuzzywuzzy import process
+from fuzzywuzzy import process, fuzz
 from datetime import datetime
 from flask import Flask, render_template, request, g, jsonify
 import time
@@ -67,12 +67,20 @@ def search_routes():
     query = request.args.get('route-search', '')
     app.logger.info(f"Search query: {query}")
     routes = g.routes
-    route_strings = [f"{route}" for route, _, _ in routes]
-    results = process.extract(query, route_strings, limit=50)
+
+    def custom_scorer(s):
+        route, bound, destination = s
+        route_score = fuzz.ratio(query, route) * 2  # Give more weight to exact route matches
+        dest_score = fuzz.partial_ratio(query, destination)  # Partial match for destinations
+        return max(route_score, dest_score)
+    
+    results = process.extractBests(query, routes, scorer=custom_scorer, score_cutoff=40, limit=50)
+
     response = [
-        f'<div class="route-option" data-id="{routes[route_strings.index(result[0])][0]}|{routes[route_strings.index(result[0])][1]}">{result[0]} - {routes[route_strings.index(result[0])][2]}</div>'
-        for result in results
+        f'<div class="route-option" data-id="{route}|{bound}">{route} - {destination} (Score: {score})</div>'
+        for (route, bound, destination), score in results
     ]
+
     app.logger.info(f"Search results: {response}")
     return '\n'.join(response)
 
@@ -122,7 +130,7 @@ def update():
        
 def get_bus_eta(bus_no: str, direction: str, stop: str):
     eta_url = f"https://data.etabus.gov.hk/v1/transport/kmb/eta/{stop}/{bus_no}/1"
-    curr_time = datetime.now()
+    curr_time = datetime.now().replace(tzinfo=None)
 
     try:
         content = requests.get(eta_url).json()['data']
@@ -136,10 +144,14 @@ def get_bus_eta(bus_no: str, direction: str, stop: str):
 
 
 def calculate_time_diff(curr, eta):
-    eta = datetime.fromisoformat(eta)
-    eta = eta.replace(tzinfo=None)  # Remove timezone info
-    diff = eta - curr
-    return round(diff.total_seconds() / 60)
+    try:
+        eta = datetime.fromisoformat(eta)
+        eta = eta.replace(tzinfo=None)
+        diff = eta - curr
+        return round(diff.total_seconds() / 60)
+    except ValueError as e:
+        print('Exception', e)
+        return -1
 
 
 if __name__ == '__main__':
