@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="https://unpkg.com/htmx.org" defer></script>
     <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6"></script>
 </head>
 <body class="container">
     <h1 class="text-center mb-4">Stupid Simple KMB Bus Tracker</h1>
@@ -16,6 +17,7 @@
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="route"><b>Select Route:</b></label>
+                <input type="text" class="form-control mb-2" id="route-search" placeholder="Search Route" aria-label="Search Route">
                 <select class="form-control" id="route" name="route" hx-get="/update-options" hx-target="#stop" hx-trigger="change" aria-label="Select Route">
                     <option value="">--Select--</option>
                     {% for route, bound, destination in routes %}
@@ -30,7 +32,7 @@
                     <!--Dynamic update-->
                 </select>
             </div>
-            <button class="btn btn-primary"
+            <button class="btn btn-dark rounded"
                 hx-get="/update" 
                 hx-target="this"
                 hx-trigger="click"
@@ -55,6 +57,14 @@
                 document.getElementById('map').innerHTML = response.map;
                 document.getElementById('bus-eta').innerHTML = response.table;
             }
+        });
+        document.getElementById('route-search').addEventListener('input', function() {
+            const searchValue = this.value.toLowerCase();
+            const options = document.querySelectorAll('#route option');
+            options.forEach(option => {
+                const text = option.textContent.toLowerCase();
+                option.style.display = text.includes(searchValue) ? 'block' : 'none';
+            });
         });
     </script>
 </body>
