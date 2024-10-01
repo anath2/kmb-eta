@@ -75,10 +75,9 @@ def search_routes():
 
 @app.route('/update-options', methods=['GET'])
 def update_options():
-    route, bound = request.args.get('route', '').split(',')
-    route = route.strip()
-    bound = bound.strip()
-    stops = get_stops_by_route_and_bound(route, bound)
+    route = request.args.get('route', '').strip()
+    direction = request.args.get('direction', '').strip()
+    stops = get_stops_by_route_and_bound(route, direction)
     # Return the stop options as a string of <option> elements
     options = ''.join([
         f'<option value="{stop_name},{stop_id},{stop_long},{stop_lat}">{stop_name}</option>' 
@@ -91,9 +90,10 @@ def update_options():
 def update():
     # Get the selected items from the dropdown menus
     stop_data = request.args.get('stop', '')
-    route, dir = request.args.get('route', '').split(',')
+    route_data = request.args.get('route', '')
+    route, direction = route_data.split('|')
     route = route.strip()
-    dir = dir.strip()
+    direction = direction.strip()
 
     stop_name, stop_id, stop_long, stop_lat = stop_data.split(',')
     stop_name = stop_name.strip()

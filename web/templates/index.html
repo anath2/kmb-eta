@@ -67,7 +67,8 @@
                 document.getElementById('route-search').value = selectedText;
                 document.getElementById('route-results').innerHTML = '';
                 
-                htmx.ajax('GET', `/update-options?route=${encodeURIComponent(selectedId)}`, '#stop');
+                const [route, direction] = selectedId.split('|');
+                htmx.ajax('GET', `/update-options?route=${encodeURIComponent(route)}&direction=${encodeURIComponent(direction)}`, '#stop');
             }
         });
     </script>
