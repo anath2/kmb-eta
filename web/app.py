@@ -66,19 +66,19 @@ def index():
 def search_routes():
     query = request.args.get('route-search', '')
     app.logger.info(f"Search query: {query}")
-    routes = g.routes
+    routes = {(route, bound): destination for route, bound, destination in g.routes}
 
-    def custom_scorer(s):
-        route, bound, destination = s
-        route_score = fuzz.ratio(query, route) * 2  # Give more weight to exact route matches
-        dest_score = fuzz.partial_ratio(query, destination)  # Partial match for destinations
+    def custom_scorer(key_value):
+        (route, bound), destination = key_value
+        route_score = fuzz.ratio(query.lower(), route.lower()) * 2  # Give more weight to exact route matches
+        dest_score = fuzz.partial_ratio(query.lower(), destination.lower())  # Partial match for destinations
         return max(route_score, dest_score)
     
-    results = process.extractBests(query, routes, scorer=custom_scorer, score_cutoff=40, limit=50)
+    results = process.extractBests(query, routes.items(), scorer=custom_scorer, score_cutoff=40, limit=50)
 
     response = [
         f'<div class="route-option" data-id="{route}|{bound}">{route} - {destination} (Score: {score})</div>'
-        for (route, bound, destination), score in results
+        for ((route, bound), destination), score in results
     ]
 
     app.logger.info(f"Search results: {response}")
