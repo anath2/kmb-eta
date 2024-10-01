@@ -67,11 +67,10 @@ def search_routes():
     query = request.args.get('route-search', '')
     app.logger.info(f"Search query: {query}")
     routes = g.routes
-    route_strings = [f"{route} - {destination}" for route, bound, destination in routes]
-    results = process.extract(query, route_strings, limit=10)
-    results = sorted(results, key=lambda x: x[1], reverse=True)
+    route_strings = [f"{route}" for route, _, _ in routes]
+    results = process.extract(query, route_strings, limit=50)
     response = [
-        f'<div class="route-option" data-id="{routes[route_strings.index(result[0])][0]}|{routes[route_strings.index(result[0])][1]}">{result[0]}</div>'
+        f'<div class="route-option" data-id="{routes[route_strings.index(result[0])][0]}|{routes[route_strings.index(result[0])][1]}">{result[0]} - {routes[route_strings.index(result[0])][2]}</div>'
         for result in results
     ]
     app.logger.info(f"Search results: {response}")
