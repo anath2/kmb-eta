@@ -21,6 +21,9 @@ def clean_routes_table():
     conn = get_db()
     cur = conn.cursor()
 
+    # Remove rows where service_type != 1
+    cur.execute('DELETE FROM routes WHERE service_type != 1')
+
     # Remove duplicates by route and destination, keeping the first occurrence
     cur.execute('''
         DELETE FROM routes

@@ -66,23 +66,14 @@ def index():
 def search_routes():
     query = request.args.get('route-search', '')
     app.logger.info(f"Search query: {query}")
-    routes = {f"{route}|{bound}": destination for route, bound, destination in g.routes}
-
-    def custom_scorer(choice, query):
-        route_bound, destination = choice
-        route = route_bound.split('|')[0]
-        route_score = fuzz.ratio(query.lower(), route.lower()) * 2  # Give more weight to exact route matches
-        dest_score = fuzz.partial_ratio(query.lower(), destination.lower())  # Partial match for destinations
-        return max(route_score, dest_score)
-    
-    results = process.extractBests(query, routes.items(), scorer=custom_scorer, score_cutoff=40, limit=50)
+    routes = [f"{route}|{bound}|{destination}" for route, bound, destination in g.routes]
+    results = process.extractBests(query, routes, scorer=fuzz.partial_ratio, score_cutoff=40, limit=50)
 
     response = [
-        f'<div class="route-option" data-id="{route_bound}">{route_bound.split("|")[0]} - {destination} (Score: {score})</div>'
-        for (route_bound, destination), score in results
+        f'<div class="route-option" data-id="{route_bound}">{route_bound.split("|")[0]} - {route_bound.split("|")[2]}</div>'
+        for route_bound, score in results
     ]
 
-    app.logger.info(f"Search results: {response}")
     return '\n'.join(response)
 
 
@@ -104,7 +95,7 @@ def update():
     # Get the selected items from the dropdown menus
     stop_data = request.args.get('stop', '')
     route_data = request.args.get('route', '')
-    route, direction = route_data.split('|')
+    route, direction, _ = route_data.split('|')
     route = route.strip()
     direction = direction.strip()
 
@@ -119,7 +110,6 @@ def update():
     map_html = folium_map._repr_html_()
 
     bus_eta = get_bus_eta(route, direction, stop_id)
-    print(route, direction, stop_id)
     map_content = render_template('map.html', map_html=map_html)
     table_content = render_template('table.html', bus_eta=bus_eta)
     return jsonify({
@@ -136,7 +126,10 @@ def get_bus_eta(bus_no: str, direction: str, stop: str):
     try:
         content = requests.get(eta_url).json()['data']
         content = [c for c in content if c['dir'] == direction]  # ensures same direction
-        content = [c for c in content if c['eta'] != '']
+
+        if (len(content) == 1) and ((content[0]['eta'] == '') or (content[0]['eta'] == 'null') or (content[0]['eta'] == None)):
+            return ['Final bus departed']
+
         content = [calculate_time_diff(curr_time, c['eta']) for c in content]
         return list(sorted(content))
     except requests.exceptions.RequestException as e:

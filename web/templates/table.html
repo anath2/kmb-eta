@@ -8,7 +8,13 @@
         {% if bus_eta %}
             {% for eta in bus_eta %}
             <tr>
-                <td>{{ eta if eta and eta > 0 else '-' }}</td>
+                <td> 
+                    {% if eta == 'Final bus departed' %} 
+                        <span class="text-danger">{{ eta }}</span>
+                    {% else %}
+                        <span class="text-success">{{ eta if eta and eta > 0 else '-' }}</span>
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         {% else %}
