@@ -1,0 +1,17 @@
+<h2>Selected Route: {{ route }}</h2>
+<h3>Selected Stop: {{ stop }}</h3>
+<table>
+    <tr>
+        <th>ETA Minutes</th>
+    </tr>
+    {% for eta in bus_eta %}
+    <tr>
+        
+        <td>{{ eta if eta > 0 else '-' }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div id="map" style="width: 50%; height: 500px;">
+    {{ map_html | safe }}
+</div>
