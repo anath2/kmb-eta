@@ -10,10 +10,9 @@ DATABASE = 'kmb.db'
 
 
 def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-    return db
+    if '_database' not in g:
+        g._database = sqlite3.connect(DATABASE)
+    return g._database
 
 
 @app.teardown_appcontext
@@ -40,14 +39,14 @@ def before_request():
 
 
 def get_stops_by_route_and_bound(route, bound):
-    db = get_db()
-    cur = db.execute('''
-        SELECT stops.name, stops.stop, stops.long, stops.lat
-        FROM route_stops
-        JOIN stops ON route_stops.stop = stops.stop
-        WHERE route_stops.route = ? AND route_stops.bound = ?
-    ''', (route, bound))                     
-    stops = cur.fetchall()
+    with get_db() as db:
+        cur = db.execute('''
+            SELECT stops.name, stops.stop, stops.long, stops.lat
+            FROM route_stops
+            JOIN stops ON route_stops.stop = stops.stop
+            WHERE route_stops.route = ? AND route_stops.bound = ?
+        ''', (route, bound))                     
+        stops = cur.fetchall()
     return stops
 
 
@@ -105,7 +104,7 @@ def get_bus_eta(bus_no: str, bound: str, stop: str):
         content = [c for c in content if c['eta'] != '']
         content = [calculate_time_diff(curr_time, c['eta']) for c in content]
         return list(sorted(content))
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
         print('Exception', e)
         return []
 
