@@ -75,7 +75,7 @@ def search_routes():
         dest_score = fuzz.partial_ratio(query.lower(), destination.lower())  # Partial match for destinations
         return max(route_score, dest_score)
     
-    results = process.extractBests(query, routes.items(), scorer=custom_scorer, score_cutoff=40, limit=50)
+    results = process.extractBests(query, routes, scorer=custom_scorer, score_cutoff=40, limit=50)
 
     response = [
         f'<div class="route-option" data-id="{route_bound}">{route_bound.split("|")[0]} - {destination} (Score: {score})</div>'
