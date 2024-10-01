@@ -31,12 +31,22 @@
             </div>
             <button class="btn btn-primary"
                 hx-get="/update" 
-                hx-target="#map, #bus-eta"
+                hx-target="this"
                 hx-trigger="click"
                 hx-include="[name='route'],[name='stop']"
+                hx-swap="none"
                 aria-label="Submit">
                 Submit
             </button>
+            <script>
+                document.body.addEventListener('htmx:afterRequest', function(event) {
+                    if (event.detail.elt.getAttribute('aria-label') === 'Submit') {
+                        var response = JSON.parse(event.detail.xhr.responseText);
+                        document.getElementById('map').innerHTML = response.map;
+                        document.getElementById('bus-eta').innerHTML = response.table;
+                    }
+                });
+            </script>
         </div>
         <div class="col-lg-6 mt-4">
             <div id="map"><!-- Map will be updated here --></div>

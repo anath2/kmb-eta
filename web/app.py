@@ -58,6 +58,8 @@ def index():
 
 
 # Route to handle HTMX requests for updates
+from flask import jsonify
+
 @app.route('/update', methods=['GET'])
 def update():
     # Get the selected items from the dropdown menus
@@ -79,7 +81,10 @@ def update():
     bus_eta = get_bus_eta(route, dir, stop_id)
     map_content = render_template('map.html', map_html=map_html)
     table_content = render_template('table.html', bus_eta=bus_eta)
-    return f"{map_content}{table_content}"
+    return jsonify({
+        'map': map_content,
+        'table': table_content
+    })
 
 
 @app.route('/update-options', methods=['GET'])
