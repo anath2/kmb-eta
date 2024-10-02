@@ -30,7 +30,7 @@ def close_connection(exception):
 def get_all_routes():
     if 'routes' not in g:
         db = get_db()
-        cur = db.execute('SELECT route, bound, destination FROM routes')
+        cur = db.execute('SELECT DISTINCT route, bound, destination FROM routes ORDER BY route, bound')
         g.routes = cur.fetchall()  # Store the result in g
     return g.routes
 
