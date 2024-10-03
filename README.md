@@ -1,1 +1,4 @@
-# KMB Bus ETA: Your crystal ball for Hong Kong bus arrivals 🚌🔮
+# KMB Bus ETA
+
+Simple, stupid KMB bus arrival times
+
