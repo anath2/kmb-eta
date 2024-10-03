@@ -16,29 +16,6 @@ def close_connection():
     db.close()
 
 
-# Clean table
-def clean_routes_table():
-    conn = get_db()
-    cur = conn.cursor()
-
-    # Remove rows where service_type != 1
-    cur.execute('DELETE FROM routes WHERE service_type != 1')
-
-    # Remove duplicates by route and destination, keeping the first occurrence
-    cur.execute('''
-        DELETE FROM routes
-        WHERE rowid NOT IN (
-            SELECT MIN(rowid)
-            FROM routes
-            GROUP BY route, destination
-        )
-    ''')
-
-    # Commit the changes and close the connection
-    conn.commit()
-    conn.close()
-
-
 # Create tables if they do not exist
 def create_tables():
     conn = sqlite3.connect(DATABASE)
@@ -183,7 +160,6 @@ def populate_route_stops():
 def populate_all():
     create_tables()
     fetch_and_populate_routes()
-    clean_routes_table()
     fetch_and_populate_stops()
     fetch_and_populate_route_stops()
     print("All data populated.")
