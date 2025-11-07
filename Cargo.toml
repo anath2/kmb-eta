@@ -1,0 +1,16 @@
+[package]
+name = "kmb-eta-tui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = "0.28"
+crossterm = "0.28"
+tokio = { version = "1.40", features = ["full"] }
+reqwest = { version = "0.12", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rusqlite = { version = "0.32", features = ["bundled"] }
+anyhow = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+fuzzy-matcher = "0.3"
